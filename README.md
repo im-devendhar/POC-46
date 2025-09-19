@@ -1,133 +1,95 @@
-POC-46 
 
- 
 
- 
+#  POC-46
 
- 
+##  Overview
 
-Overview 
+This PoC automates the detection and deletion of unused AWS resources to reduce cloud costs and improve infrastructure hygiene. It uses a Python script powered by the **Boto3 SDK** to identify and clean up orphaned or idle resources such as:
 
-This PoC is designed to automate the detection and deletion of unused AWS resources to reduce costs and improve cloud hygiene. It uses a Python script that interacts with AWS services via the Boto3 SDK to identify and clean up orphaned or idle resources. 
+- Stopped EC2 instances  
+- Unattached EBS volumes  
+- Unused Elastic IPs  
 
-Implementation Steps 
+---
 
-Step 1: EC2 Instance Setup 
+##  Implementation Steps
 
-An EC2 instance was created to run and test the AWS cleanup automation project. 
+### Step 1: EC2 Instance Setup
 
-Step 2: Install Python, pip3, and Boto3 
+Launch an **Ubuntu-based EC2 instance** to host and execute the cleanup automation script.
 
-The following commands were used to install Python 3, pip3, and the Boto3 library: 
+---
 
-# Step 1: Update the system 
+### Step 2: Install Required Tools
 
-sudo apt update -y 
+Run the following commands to install Python, pip3, Boto3, and AWS CLI:
 
-sudo apt upgrade -y 
+```bash
+# Update the system
+sudo apt update -y
+sudo apt upgrade -y
 
-  
+# Install Python 3 and pip
+sudo apt install python3 -y
+python3 --version
 
-# Step 2: Install Python 3 and pip 
+sudo apt install python3-pip -y
+pip3 --version
 
-sudo apt install python3 -y 
+# Install Boto3 (AWS SDK for Python)
+pip3 install boto3 --user
 
-python3 --version 
+# Install AWS CLI
+sudo apt install awscli -y
+aws --version
+```
 
-  
+---
 
-sudo apt install python3-pip -y 
+### Step 3: Configure AWS CLI
 
-pip3 --version 
+Configure AWS CLI with your credentials to allow authenticated access to AWS services:
 
-  
+```bash
+aws configure
+```
 
-# Step 3: Install Boto3 (AWS SDK for Python) 
+You will be prompted to enter:
 
-pip3 install boto3 --user 
+- Access Key ID  
+- Secret Access Key  
+- Default region name  
+- Default output format  
 
-  
+---
 
-# Step 4: Install AWS CLI 
+### Step 4: Execute Python Script
 
-sudo apt install awscli -y 
+Ensure your cleanup script (`cleanupfile.py`) has the correct permissions and execute it:
 
-aws --version 
+```bash
+chmod 777 cleanupfile.py
+python3 cleanupfile.py
+```
 
-  
+---
 
-# Step 5: Configure AWS CLI with your credentials 
+##  Expected Output
 
-aws configure 
+The script will produce clean and concise terminal output indicating the resources being cleaned up. Example:
 
-# (Enter Access Key, Secret Key, Region, and Output format when prompted) 
+```
+Stopped EC2 Instances:
+- i-0abcd1234efgh5678 (Terminated)
 
-  
+Unattached EBS Volumes:
+- vol-0123456789abcdef0 (Deleted)
 
-# Step 6: Set permissions and run your Python script 
+Unused Elastic IPs:
+- 54.123.45.67 (Released)
+```
 
-chmod 777 cleanupfile.py 
+---
 
-python3 cleanupfile.py 
+---
 
-  
-
-Step 3: Configure AWS CLI 
-
-AWS CLI was configured on the EC2 instance using the following command to enable authenticated access to AWS services: 
-
-aws configure 
-
- 
-
- 
-
-Below are the stopped instances, unattached volumes and Unused Elastic IPs 
-
- 
-
- 
-
- 
-
- 
-
-Step 4: Execute Python Script 
-
-The Python automation script was executed using the following command to delete unused AWS resources: 
-
-python3 cleanupfile.py 
-
- 
-
- 
-
- 
-
- 
-
- 
-
-Expected Output Style 
-
-The script produces clean and concise terminal output indicating the resources being cleaned up.  
-
-Example output: 
-
- 
-
-After executing the cleanupfile.py stopped instances, unattached volumes and Unused Elastic IPs 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
