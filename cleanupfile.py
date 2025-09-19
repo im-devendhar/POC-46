@@ -13,8 +13,14 @@ def cleanup_stopped_instances():
     instances = ec2.describe_instances(Filters=[{'Name': 'instance-state-name', 'Values': ['stopped']}])
     for reservation in instances['Reservations']:
         for instance in reservation['Instances']:
-            print(f"Stopped Instance: {instance['InstanceId']}")
-            ec2.terminate_instances(InstanceIds=[instance['InstanceId']])
+            instance_id = instance['InstanceId']
+            print(f"Stopped Instance: {instance_id}")
+            try:
+                response = ec2.terminate_instances(InstanceIds=[instance_id])
+                print(f"Termination initiated for: {instance_id}")
+                print(response)
+            except Exception as e:
+                print(f"Failed to terminate {instance_id}: {e}")
 
 def cleanup_unused_elastic_ips():
     addresses = ec2.describe_addresses()['Addresses']
