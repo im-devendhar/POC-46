@@ -14,23 +14,22 @@ def cleanup_stopped_instances():
     for reservation in instances['Reservations']:
         for instance in reservation['Instances']:
             instance_id = instance['InstanceId']
-            print(f"Stopped Instance: {instance_id}")
             try:
-                response = ec2.terminate_instances(InstanceIds=[instance_id])
-                print(f"Termination initiated for: {instance_id}")
-                print(response)
-            except Exception as e:
-                print(f"Failed to terminate {instance_id}: {e}")
+                ec2.terminate_instances(InstanceIds=[instance_id])
+                print(f"Stopped Instance: {instance_id}")
+            except:
+                pass  # silently skip errors
 
 def cleanup_unused_elastic_ips():
     addresses = ec2.describe_addresses()['Addresses']
     for addr in addresses:
         if 'InstanceId' not in addr:
-            print(f"Unused Elastic IP: {addr['AllocationId']}")
+            allocation_id = addr.get('AllocationId')
             try:
-                ec2.release_address(AllocationId=addr['AllocationId'])
-            except Exception as e:
-                print(f"Failed to release Elastic IP {addr['AllocationId']}: {e}")
+                ec2.release_address(AllocationId=allocation_id)
+                print(f"Unused Elastic IP: {allocation_id}")
+            except:
+                pass  # silently skip errors
 
 def cleanup_old_snapshots(days_old=30):
     snapshots = ec2.describe_snapshots(OwnerIds=['self'])['Snapshots']
@@ -38,8 +37,8 @@ def cleanup_old_snapshots(days_old=30):
     for snap in snapshots:
         start_time = snap['StartTime'].replace(tzinfo=None)
         if start_time < cutoff:
-            print(f"Old Snapshot: {snap['SnapshotId']} from {start_time}")
             ec2.delete_snapshot(SnapshotId=snap['SnapshotId'])
+            print(f"Old Snapshot: {snap['SnapshotId']}")
 
 if __name__ == "__main__":
     print("Starting AWS Cleanup PoC...")
